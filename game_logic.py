@@ -26,7 +26,27 @@ def display_game_state(mistakes, secret_word, guessed_letters):
         else:
             display_word += "_ "
     print("Word: ", display_word)
-    print("\n")
+
+def clear_screen():
+    """Clears the screen."""
+    print("\033[2J\033[H", end="")
+
+def play_again():
+    """Play again."""
+    print("Do you want to play again? ;)")
+    print("y => Yes or n => No")
+
+    choice = input(">> ").strip().lower()
+
+    if choice == "y":
+        clear_screen()
+        play_game()
+        return None
+    if choice == "n":
+        print("Goodbye!")
+        return None
+    print("Invalid choice, please type y or n.")
+    return play_again()
 
 def play_game():
     """
@@ -36,23 +56,26 @@ def play_game():
     guessed_letters = []
     mistakes = 0
 
+    print("=" * 28)
     print("Welcome to Snowman Meltdown!")
-    print("Secret word selected: " + secret_word)  # for testing, later remove this line
-    #display_game_state(mistakes, secret_word, guessed_letters)
-    # TODO: Build your game loop here.
+    print("=" * 28)  # for testing, later remove this line
+
     while mistakes < len(STAGES) - 1:
         display_game_state(mistakes, secret_word, guessed_letters)
         # For now, simply prompt the user once:
         guess = input("Guess a letter: ").lower()
-        print("You guessed:", guess)
         if len(guess) != 1 or not guess.isalpha():
             print("Please enter a letter only")
         if guess in guessed_letters:
             print(f'You already guessed "{guess}" letter! Try again')
         guessed_letters.append(guess)
-        mistakes += 1
-
+        if guess in secret_word:
+            print(f">> Good job! '{guess}' is in the word.")
+        else:
+            mistakes += 1
+            print(f">> Sorry, '{guess}' is not in the word.")
 
     display_game_state(mistakes, secret_word, guessed_letters)
     print("GAME OVER! The snowman has completely melted.")
     print(f"The secret word was: {secret_word}")
+    play_again()
